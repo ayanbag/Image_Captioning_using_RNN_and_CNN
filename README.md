@@ -1,1 +1,1 @@
-# Image_Captioning_using_RNN_and_CNN
+# Image Captioning Using RNN and CNN
