@@ -1,0 +1,1 @@
+### Run the any one of the above script to download the dataset directly from [MS-COCO](https://cocodataset.org/#home) servers
