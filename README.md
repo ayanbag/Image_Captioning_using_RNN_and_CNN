@@ -1,5 +1,4 @@
 # Image Captioning Using RNN and CNN
-# Image Captioning Using RNN and CNN
 
 ## Introduction
 Attention mechanisms are broadly used in present image captioning encoder / decoder frameworks, where at each step a weighted average is generated on encoded vectors to direct the process of caption decoding. However, the decoder has no knowledge of whether or how well the vector being attended and the attention question being given are related, which may result in the decoder providing erroneous results. Image captioning, that is to say generating natural automatic descriptions of language images are useful for visually impaired images and for the quest of natural language related pictures. It is significantly more demanding than traditional vision tasks recognition of objects and classification of images for two guidelines. First, well formed structured output space natural language sentences are considerably more challenging than just a set of class labels to predict. Secondly, this dynamic output space enables a more thin understanding of the visual scenario, and therefore also a more informative one visual scene analysis to do well on this task.
