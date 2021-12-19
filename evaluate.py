@@ -1,12 +1,11 @@
 import tensorflow as tf
 import numpy as np
+import nltk
 
 from utils import load_image
 
 def evaluate(image,encoder,decoder,word_to_index,index_to_word,max_length, image_features_extract_model,attention_features_shape=64):
-    
     attention_plot = np.zeros((max_length, attention_features_shape))
-
     hidden = decoder.reset_state(batch_size=1)
 
     temp_input = tf.expand_dims(load_image(image)[0], 0)
@@ -34,3 +33,6 @@ def evaluate(image,encoder,decoder,word_to_index,index_to_word,max_length, image
 
     attention_plot = attention_plot[:len(result), :]
     return result, attention_plot
+
+
+

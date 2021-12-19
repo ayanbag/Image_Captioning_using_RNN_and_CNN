@@ -1,12 +1,12 @@
 import tensorflow as tf
 from PIL import Image
-import os
-import json
-import matplotlib.pyplot as plt
 import numpy as np
 import time
+from tqdm import tqdm
+from nltk.translate import bleu
+from nltk.translate.bleu_score import sentence_bleu
 
-from evaluate import evaluate
+from evaluate import evaluate, bleu_score
 from model import Attention, CNN_Encoder, RNN_Decoder
 #from loss import loss_function
 from preprocessing import datalimit, train_test_split
@@ -38,7 +38,7 @@ def main(start=True):
     image_dataset = tf.data.Dataset.from_tensor_slices(encode_train)
     image_dataset = image_dataset.map(load_image, num_parallel_calls=tf.data.AUTOTUNE).batch(16)
 
-    for img, path in image_dataset:
+    for img, path in tqdm(image_dataset):
         batch_features = image_features_extract_model(img)
         batch_features = tf.reshape(batch_features,(batch_features.shape[0], -1, batch_features.shape[3]))
 
@@ -87,11 +87,9 @@ def main(start=True):
     for epoch in range(start_epoch, EPOCHS):
         start = time.time()
         total_loss = 0
-
         for (batch, (img_tensor, target)) in enumerate(dataset):
             batch_loss, t_loss = train_step(img_tensor, target)
             total_loss += t_loss
-
             if batch % 100 == 0:
                 average_batch_loss = batch_loss.numpy()/int(target.shape[1])
                 print(f'Epoch {epoch+1} Batch {batch} Loss {average_batch_loss:.4f}')
@@ -104,8 +102,7 @@ def main(start=True):
         print(f'Epoch {epoch+1} Loss {total_loss/num_steps:.6f}')
         print(f'Time taken for 1 epoch {time.time()-start:.2f} sec\n')
 
-    print("Testing the model")
-    
+   
     # Validation Dataset testing
     rid = np.random.randint(0, len(img_name_val))
     image = img_name_val[rid]
@@ -114,7 +111,7 @@ def main(start=True):
     print('Real Caption:', real_caption)
     print('Prediction Caption:', ' '.join(result))
     plot_attention(image, result, attention_plot)
-
+  
     # Unseen Data testing
     for i in range(1,3):
         image_path = 'data/unseen_image/'+i+'.jpg' # User path to image
@@ -123,6 +120,20 @@ def main(start=True):
         plot_attention(image_path, result, attention_plot)
         # opening the image
         Image.open(image_path)
+
+    # Calculate the avergae bleu score
+    bleu_score = 0 # initialize the bleu score
+    image_limit=1000 # number of images to test
+    for i in tqdm(range(image_limit)):
+        rid1 = np.random.randint(0, len(img_name_val))
+        image1 = img_name_val[rid1]
+        real_caption1 = ' '.join([tf.compat.as_text(index_to_word(i).numpy()) for i in cap_val[rid] if i not in [0]])
+        result1, attention_plot1 = evaluate(image1,encoder,decoder,word_to_index,index_to_word,max_length, image_features_extract_model,attention_features_shape)
+
+        caption_bleu_score = 0
+        caption_bleu_score = sentence_bleu(real_caption1, result1) # calculate the bleu score
+        bleu_score+=caption_bleu_score
+    print("The average bleu score : ", bleu_score/image_limit)
 
 if __name__ == "__main__":
     start=True
