@@ -131,7 +131,7 @@ def main(start=True):
         result1, attention_plot1 = evaluate(image1,encoder,decoder,word_to_index,index_to_word,max_length, image_features_extract_model,attention_features_shape)
 
         caption_bleu_score = 0
-        caption_bleu_score = sentence_bleu(real_caption1, result1) # calculate the bleu score
+        caption_bleu_score = sentence_bleu(list(real_caption1), list(result1)) # calculate the bleu score
         bleu_score+=caption_bleu_score
     print("The average bleu score : ", bleu_score/image_limit)
 
