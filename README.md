@@ -15,7 +15,6 @@ python3 data/download_data.py
 - Python 3
 - Tensorflow 2.0
 - Pillow
-- tqdm
 - nltk
   
 ## Model
